@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     private PlayerHealth playerHealth;
     private WeaponController weaponController;
 
+    public int CurrentScore => score;
+
     private void Awake()
     {
         if (Instance == null)
@@ -34,6 +36,10 @@ public class GameManager : MonoBehaviour
         playerHealth = FindObjectOfType<PlayerHealth>();
         weaponController = FindObjectOfType<WeaponController>();
         UpdateUI();
+
+        // Cacher le curseur au début du jeu
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void AddScore(int points)

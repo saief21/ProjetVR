@@ -44,15 +44,25 @@ public class WeaponController : MonoBehaviour
     {
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
+        Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 1f); // Ligne de debug pour voir le rayon
 
         if (Physics.Raycast(ray, out hit, range))
         {
-            Debug.Log("Hit: " + hit.transform.name);
+            Debug.Log($"Hit something: {hit.transform.name} at distance {hit.distance}");
             EnemyHealth enemy = hit.transform.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
+                Debug.Log($"Hit enemy! Current health before damage: {enemy.GetHealthPercentage() * 100}%");
                 enemy.TakeDamage(damage);
             }
+            else
+            {
+                Debug.Log("Hit object has no EnemyHealth component");
+            }
+        }
+        else
+        {
+            Debug.Log("Did not hit anything");
         }
     }
 

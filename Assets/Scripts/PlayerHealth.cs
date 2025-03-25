@@ -18,6 +18,8 @@ public class PlayerHealth : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
+        if (onPlayerDeath == null)
+            onPlayerDeath = new UnityEvent();
         onHealthChanged?.Invoke(currentHealth);
     }
 
@@ -26,6 +28,7 @@ public class PlayerHealth : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= damage;
+        currentHealth = Mathf.Max(currentHealth, 0);
         onHealthChanged?.Invoke(currentHealth);
 
         if (currentHealth <= 0)
@@ -47,7 +50,7 @@ public class PlayerHealth : MonoBehaviour
         if (isDead) return;
         
         isDead = true;
-        onPlayerDeath?.Invoke();
+        onPlayerDeath.Invoke();
     }
 
     public float GetHealthPercentage()
