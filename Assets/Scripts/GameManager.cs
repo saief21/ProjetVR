@@ -33,8 +33,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        playerHealth = FindObjectOfType<PlayerHealth>();
-        weaponController = FindObjectOfType<WeaponController>();
+        playerHealth = Object.FindFirstObjectByType<PlayerHealth>();
+        weaponController = Object.FindFirstObjectByType<WeaponController>();
         UpdateUI();
 
         // Cacher le curseur au début du jeu

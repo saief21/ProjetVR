@@ -18,7 +18,7 @@ public class DeathScreen : MonoBehaviour
         }
 
         // S'abonner à l'événement de mort du joueur
-        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+        PlayerHealth playerHealth = Object.FindFirstObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.onPlayerDeath.AddListener(ShowDeathScreen);
@@ -31,7 +31,8 @@ public class DeathScreen : MonoBehaviour
         deathScreenPanel.SetActive(true);
 
         // Récupérer et afficher le score
-        int currentScore = GameManager.Instance != null ? GameManager.Instance.CurrentScore : 0;
+        GameManager gameManager = Object.FindFirstObjectByType<GameManager>();
+        int currentScore = gameManager != null ? gameManager.CurrentScore : 0;
         finalScoreText.text = $"Score Final : {currentScore}";
 
         // Gérer le high score
@@ -54,15 +55,14 @@ public class DeathScreen : MonoBehaviour
 
     private void DisablePlayerControl()
     {
-        // Désactiver le PlayerController
-        PlayerController playerController = FindObjectOfType<PlayerController>();
+        // Désactiver les scripts de contrôle du joueur
+        var playerController = Object.FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {
             playerController.enabled = false;
         }
 
-        // Désactiver le WeaponController
-        WeaponController weaponController = FindObjectOfType<WeaponController>();
+        var weaponController = Object.FindFirstObjectByType<WeaponController>();
         if (weaponController != null)
         {
             weaponController.enabled = false;
