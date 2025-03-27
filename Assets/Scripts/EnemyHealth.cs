@@ -13,6 +13,9 @@ public class EnemyHealth : MonoBehaviour
 
     private bool isDead = false;
 
+    public float MaxHealth => maxHealth;
+    public event System.Action OnEnemyDeath;
+
     private void Start()
     {
         currentHealth = maxHealth;
@@ -59,11 +62,25 @@ public class EnemyHealth : MonoBehaviour
         }
     }
 
+    public void SetMaxHealth(float newMaxHealth)
+    {
+        maxHealth = newMaxHealth;
+        currentHealth = maxHealth;
+        
+        if (healthBar != null)
+        {
+            healthBar.maxValue = maxHealth;
+            healthBar.value = currentHealth;
+        }
+    }
+
     private void Die()
     {
         if (isDead) return;
         
         isDead = true;
+        
+        OnEnemyDeath?.Invoke();
         
         // Add points
         if (GameManager.Instance != null)

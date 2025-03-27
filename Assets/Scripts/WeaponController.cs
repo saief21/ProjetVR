@@ -19,6 +19,12 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private GameObject bulletTrailPrefab;
     [SerializeField] private Transform bulletSpawnPoint;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private AudioClip reloadSound;
+    [SerializeField] private AudioClip impactSound;
+
     private Camera mainCamera;
     public int CurrentAmmo => currentAmmo;
     public int MaxAmmo => maxAmmo;
@@ -40,6 +46,14 @@ public class WeaponController : MonoBehaviour
                 bulletSpawnPoint.localPosition = new Vector3(0, 0, 0.5f); // Ajustez selon votre arme
             }
         }
+
+        // Ajouter AudioSource si nécessaire
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.spatialBlend = 1f; // Son 3D
+            audioSource.volume = 0.7f;
+        }
     }
 
     private void Update()
@@ -55,12 +69,18 @@ public class WeaponController : MonoBehaviour
 
         if ((Input.GetKeyDown(KeyCode.R) || currentAmmo == 0) && currentAmmo < maxAmmo)
         {
-            StartCoroutine(Reload());
+            StartCoroutine(ReloadCoroutine());
         }
     }
 
     private void Shoot()
     {
+        // Jouer le son de tir
+        if (shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound);
+        }
+
         // Effet de flash
         if (muzzleFlash != null)
         {
@@ -88,8 +108,14 @@ public class WeaponController : MonoBehaviour
             // Créer l'impact de balle
             if (bulletHolePrefab != null)
             {
-                GameObject bulletHole = Instantiate(bulletHolePrefab, hit.point, Quaternion.LookRotation(hit.normal));
+                GameObject bulletHole = Instantiate(bulletHolePrefab, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(hit.normal));
                 Destroy(bulletHole, 5f);
+
+                // Jouer le son d'impact
+                if (impactSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(impactSound, hit.point, 0.5f);
+                }
             }
 
             // Chercher le composant EnemyHealth
@@ -129,13 +155,19 @@ public class WeaponController : MonoBehaviour
         return hitHeight > headThreshold;
     }
 
-    private IEnumerator Reload()
+    private IEnumerator ReloadCoroutine()
     {
         isReloading = true;
-        Debug.Log("Reloading...");
-        yield return new WaitForSeconds(2f);
+
+        // Jouer le son de rechargement
+        if (reloadSound != null)
+        {
+            audioSource.PlayOneShot(reloadSound);
+        }
+
+        yield return new WaitForSeconds(2f); // Temps de rechargement
+
         currentAmmo = maxAmmo;
         isReloading = false;
-        Debug.Log("Reload complete!");
     }
 }
